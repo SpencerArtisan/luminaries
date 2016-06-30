@@ -1,9 +1,11 @@
 package com.artisansoftware.luminaries
 
-/**
-  * Created by spencerward on 30/06/2016.
-  */
+import Twitter._
+import Style._
+
 class CommandLineParser(args: Array[String]) {
+  type Command = () => String
+
   val luminaries = List(
     Luminary("Michael Crick", "MichaelLCrick"),
     Luminary("Justin Webb", "JustinOnWeb"),
@@ -29,9 +31,16 @@ class CommandLineParser(args: Array[String]) {
 
   val DefaultHours = 2
 
-  def toRequest: TwitterRequest = {
-    val hours = if (args.length >= 1) args(0).toInt else DefaultHours
-    new TwitterRequest(luminaries, hours)
-  }
+  def buildCommand: Command = {
+    () => {
+      def format(luminary: Luminary, tweets: List[Tweet]): String = {
+        val header = f"$GreyBackground${luminary.name.toUpperCase}%28s  $EndStyle"
+        "" :: header :: "" :: tweets.map(TweetFormatter.format) mkString "\r\n"
+      }
 
+      val hours = if (args.length >= 1) args(0).toInt else DefaultHours
+      val result: Map[Luminary, List[Tweet]] = Twitter.tweets(new TwitterRequest(luminaries, hours))
+      (for ((luminary, tweets) <- result) yield format(luminary, tweets)) mkString "\r\n"
+    }
+  }
 }

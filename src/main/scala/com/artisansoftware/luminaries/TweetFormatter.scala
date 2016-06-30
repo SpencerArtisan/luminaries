@@ -1,14 +1,9 @@
 package com.artisansoftware.luminaries
 
 import Twitter._
+import Style._
 
 object TweetFormatter {
-  val Underline = "\u001B[4m"
-  val Bold = "\u001B[1m"
-  val Blue = "\u001B[34m"
-  val EndColour = "\u001B[39m"
-  val EndStyle = "\u001B[0m"
-
   def format(tweet: Tweet): String =
     f"$Bold${tweet.getCreatedAt}%ta %<tb %<td %<tR$EndStyle   ${body(tweet)}%s"
 
