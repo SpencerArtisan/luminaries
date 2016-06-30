@@ -2,31 +2,42 @@ package com.artisansoftware.luminaries
 
 import Twitter._
 import Style._
+import twitter4j._
 
 class CommandLineParser(args: Array[String]) {
   type Command = () => String
 
   val DefaultHours = 2
   val argsExcludingSwitches = args.filterNot(_.startsWith("-"))
-  val switches = args.filter(_.startsWith("-"))
+  val switches: Array[Char] = args.filter(_.startsWith("-")).
+    flatMap((switch) => switch.substring(1).toCharArray)
 
-  def buildCommand: Command =
-    if (switches.contains("-h"))
+  def buildCommand: Command = {
+    val filter = (t: Tweet) =>
+        (!t.isRetweet || switches.contains('r')) &&
+          (t.getInReplyToUserId == -1 || switches.contains('c'))
+
+    if (switches.contains('h'))
       () => help
-    else if (switches.contains("-c"))
-      () => listTweets(_.getInReplyToUserId != -1)
-    else if (switches.contains("-r"))
-      () => listTweets(_.isRetweet)
     else
-      () => listTweets(!_.isRetweet)
+      () => listTweets(filter)
+  }
 
   def help: String = List(
     "",
-    "\tnews -h           Display this help",
-    "\tnews [hours]      Display luminary tweets",
-    "\tnews -c [hours]   Display luminary conversation tweets",
-    "\tnews -r [hours]   Display luminary retweets",
+    "Usage",
+    "\tnews -h                  Display this help",
+    "\tnews [switches] [hours]  Display luminary tweets",
+    "where switches are",
+    "\t-c                       Conversation tweets (default is off)",
+    "\t-r                       Retweets (default is off)",
+    "\t-s                       Maintain live stream of results",
     "") mkString "\r\n"
+
+  def streamTweets: String = {
+    Twitter.tweetStream
+    "Stream established"
+  }
 
   def listTweets(filter: Tweet => Boolean): String = {
     val hours = if (argsExcludingSwitches.length >= 1) argsExcludingSwitches(0).toInt else DefaultHours

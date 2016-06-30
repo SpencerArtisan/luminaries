@@ -14,7 +14,7 @@ object App {
       case _: Throwable => println(f"$Red  News unavailable.  Are you offline?  $EndColour")
     }
 
-//  for (i <- 1 to 80) {
-//    println("\u001B[" + i + "mhello world " + i + "!\u001B[39m")
-//  }
+  //  for (i <- 1 to 80) {
+  //    println("\u001B[" + i + "mhello world " + i + "!\u001B[39m")
+  //  }
 }

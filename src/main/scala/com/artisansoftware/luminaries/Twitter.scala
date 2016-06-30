@@ -3,14 +3,17 @@ package com.artisansoftware.luminaries
 import java.util.Date
 
 import twitter4j.conf.ConfigurationBuilder
-import twitter4j.{Query, QueryResult, Status, TwitterFactory}
+import twitter4j.{TwitterStreamFactory, _}
 
 import scala.collection.JavaConversions._
 
 object Twitter {
+
   type Tweet = Status
 
   val Boring = List("soccer", "football", "sport")
+
+  val luminaryIds = Luminary.luminaries.map(_.userId)
 
   val token = new TwitterFactory(
     new ConfigurationBuilder().
@@ -22,6 +25,10 @@ object Twitter {
       setApplicationOnlyAuthEnabled(true).
       setOAuth2TokenType(token.getTokenType).
       setOAuth2AccessToken(token.getAccessToken).
+      build()).getInstance()
+
+  val twitterStream = new TwitterStreamFactory(
+    new ConfigurationBuilder().
       build()).getInstance()
 
   def tweets(request: TwitterRequest): Map[Luminary, List[Tweet]] = {
@@ -39,19 +46,39 @@ object Twitter {
     allTweets.
       filter(withinHours(_, request.hours)).
       filter(isInteresting(_, request)).
-      groupBy(tweet => matchLuminary(tweet, request.luminaries))
+      groupBy(tweet => matchLuminaryStrict(tweet, request.luminaries))
+  }
+
+  def tweetStream(): Unit = {
+    val listener = new StatusAdapter() {
+      override def onStatus(tweet: Tweet): Unit = {
+        val luminary: Option[Luminary] = matchLuminary(tweet, Luminary.luminaries)
+        if (luminary.isDefined) {
+          println(tweet.getText)
+        }
+      }
+    }
+    twitterStream.addListener(listener)
+    val tweetFilterQuery = new FilterQuery()
+
+    tweetFilterQuery.follow(luminaryIds:_*)
+
+    twitterStream.filter(tweetFilterQuery)
   }
 
   private def buildQuery(request: TwitterRequest): Query =
     new Query(request.luminaries.map("from:" + _.twitterHandle) mkString " OR ").count(100)
 
-  private def matchLuminary(tweet: Tweet, luminaries: List[Luminary]): Luminary = {
-    val tweeter = luminaries.find(tweeter => tweeter.twitterHandle.equals(tweet.getUser.getScreenName))
+  private def matchLuminaryStrict(tweet: Tweet, luminaries: List[Luminary]): Luminary = {
+    val tweeter: Option[Luminary] = matchLuminary(tweet, luminaries)
     if (tweeter.isEmpty)
       throw new Exception("Could not find a luminary with handle " + tweet.getUser.getScreenName)
 
     tweeter.get
   }
+
+  def matchLuminary(tweet: Tweet, luminaries: List[Luminary]): Option[Luminary] =
+    luminaries.find(tweeter => tweeter.twitterHandle.equals(tweet.getUser.getScreenName))
 
   private def withinHours(tweet: Tweet, hours: Int): Boolean =
     new Date().getTime - tweet.getCreatedAt.getTime < hours * (60 * 60 * 1000)
