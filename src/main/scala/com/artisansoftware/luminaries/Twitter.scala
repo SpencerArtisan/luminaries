@@ -25,7 +25,7 @@ object Twitter {
       build()).getInstance()
 
   def tweets(request: TwitterRequest): Map[Luminary, List[Tweet]] = {
-    var query: Query = buildQuery(request.luminaries, request.hours)
+    var query: Query = buildQuery(request)
     var result: QueryResult = twitter.search().search(query)
     var allTweets = List[Tweet]()
     allTweets = allTweets ++ result.getTweets
@@ -38,12 +38,12 @@ object Twitter {
 
     allTweets.
       filter(withinHours(_, request.hours)).
-      filter(isInteresting).
+      filter(isInteresting(_, request)).
       groupBy(tweet => matchLuminary(tweet, request.luminaries))
   }
 
-  private def buildQuery(luminaries: List[Luminary], hours: Int): Query =
-    new Query(luminaries.map("from:" + _.twitterHandle) mkString " OR ").count(100)
+  private def buildQuery(request: TwitterRequest): Query =
+    new Query(request.luminaries.map("from:" + _.twitterHandle) mkString " OR ").count(100)
 
   private def matchLuminary(tweet: Tweet, luminaries: List[Luminary]): Luminary = {
     val tweeter = luminaries.find(tweeter => tweeter.twitterHandle.equals(tweet.getUser.getScreenName))
@@ -56,6 +56,6 @@ object Twitter {
   private def withinHours(tweet: Tweet, hours: Int): Boolean =
     new Date().getTime - tweet.getCreatedAt.getTime < hours * (60 * 60 * 1000)
 
-  private def isInteresting(tweet: Tweet) =
-    tweet.getInReplyToStatusId == -1 && !tweet.isRetweet && Boring.forall(!tweet.getText.contains(_))
+  private def isInteresting(tweet: Tweet, request: TwitterRequest) =
+    tweet.getInReplyToStatusId == -1 && request.accept(tweet) && Boring.forall(!tweet.getText.contains(_))
 }
