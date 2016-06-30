@@ -13,19 +13,24 @@ class CommandLineParser(args: Array[String]) {
   def buildCommand: Command =
     if (switches.contains("-h"))
       () => help
+    else if (switches.contains("-c"))
+      () => listTweets(_.getInReplyToUserId != -1)
     else if (switches.contains("-r"))
-      () => listTweets(true)
+      () => listTweets(_.isRetweet)
     else
-      () => listTweets(false)
+      () => listTweets(!_.isRetweet)
 
   def help: String = List(
-    "news -h           Display this help",
-    "news [hours]      Display luminary tweets",
-    "news -r [hours]   Display luminary retweets") mkString "\r\n"
+    "",
+    "\tnews -h           Display this help",
+    "\tnews [hours]      Display luminary tweets",
+    "\tnews -c [hours]   Display luminary conversation tweets",
+    "\tnews -r [hours]   Display luminary retweets",
+    "") mkString "\r\n"
 
-  def listTweets(retweets: Boolean): String = {
+  def listTweets(filter: Tweet => Boolean): String = {
     val hours = if (argsExcludingSwitches.length >= 1) argsExcludingSwitches(0).toInt else DefaultHours
-    formatAll(Twitter.tweets(new TwitterRequest(Luminary.luminaries, hours, retweets)))
+    formatAll(Twitter.tweets(new TwitterRequest(Luminary.luminaries, hours, filter)))
   }
 
   def formatAll(result: Map[Luminary, List[Tweet]]): String =
