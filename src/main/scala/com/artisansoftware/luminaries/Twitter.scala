@@ -15,15 +15,11 @@ object Twitter {
   val token = new TwitterFactory(
     new ConfigurationBuilder().
       setApplicationOnlyAuthEnabled(true).
-//      setOAuthConsumerKey("AggzH4Q1uR4SVsxMmRNqHQnwv").
-//      setOAuthConsumerSecret("Nqy9nCe5F1TOkGVlJfE6aG9DiRqy80vS9AbVDZczX7FGffLOIz").
       build()).getInstance().getOAuth2Token
 
   val twitter = new TwitterFactory(
     new ConfigurationBuilder().
       setApplicationOnlyAuthEnabled(true).
-//      setOAuthConsumerKey("AggzH4Q1uR4SVsxMmRNqHQnwv").
-//      setOAuthConsumerSecret("Nqy9nCe5F1TOkGVlJfE6aG9DiRqy80vS9AbVDZczX7FGffLOIz").
       setOAuth2TokenType(token.getTokenType).
       setOAuth2AccessToken(token.getAccessToken).
       build()).getInstance()
