@@ -9,7 +9,7 @@ import Style._
 object App {
   def main(args: Array[String]) =
     try {
-      println(new CommandLineParser(args).buildCommand())
+      println(new CommandLineParser(args).execute)
     } catch {
       case _: Throwable => println(f"$Red  News unavailable.  Are you offline?  $EndColour")
     }

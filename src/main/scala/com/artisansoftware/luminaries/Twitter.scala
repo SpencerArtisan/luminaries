@@ -49,21 +49,15 @@ object Twitter {
       groupBy(tweet => matchLuminaryStrict(tweet, request.luminaries))
   }
 
-  def tweetStream(): Unit = {
-    val listener = new StatusAdapter() {
+  def tweetStream(request: TwitterRequest, consumer: (Luminary, Tweet) => Unit): Unit = {
+    twitterStream.addListener(new StatusAdapter() {
       override def onStatus(tweet: Tweet): Unit = {
-        val luminary: Option[Luminary] = matchLuminary(tweet, Luminary.luminaries)
-        if (luminary.isDefined) {
-          println(tweet.getText)
-        }
+        val luminary: Option[Luminary] = matchLuminary(tweet, request.luminaries)
+        if (luminary.isDefined && isInteresting(tweet, request))
+          consumer(luminary.get, tweet)
       }
-    }
-    twitterStream.addListener(listener)
-    val tweetFilterQuery = new FilterQuery()
-
-    tweetFilterQuery.follow(luminaryIds:_*)
-
-    twitterStream.filter(tweetFilterQuery)
+    })
+    twitterStream.filter(new FilterQuery().follow(luminaryIds:_*))
   }
 
   private def buildQuery(request: TwitterRequest): Query =
