@@ -123,5 +123,10 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
             <artifactId>mockito-all</artifactId>
             <version>1.9.5</version>
         </dependency>
+        <dependency>
+            <groupId>com.lambdaworks</groupId>
+            <artifactId>jacks_2.11</artifactId>
+            <version>2.3.3</version>
+        </dependency>
     </dependencies>
 </project>

@@ -21,5 +21,12 @@
     <orderEntry type="library" name="Maven: org.scalamock:scalamock-scalatest-support_2.11:3.1.2" level="project" />
     <orderEntry type="library" name="Maven: org.scalamock:scalamock-core_2.11:3.1.2" level="project" />
     <orderEntry type="library" name="Maven: org.mockito:mockito-all:1.9.5" level="project" />
+    <orderEntry type="library" name="Maven: com.lambdaworks:jacks_2.11:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scalap:2.11.0" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-compiler:2.11.0" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang.modules:scala-parser-combinators_2.11:1.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.3.0" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.3.3" level="project" />
   </component>
 </module>
