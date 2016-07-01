@@ -60,7 +60,7 @@ object Twitter {
   private val luminaryIds: List[Long] =
     twitter.
       users().
-      lookupUsers(Luminary.luminaries.map(_.twitterHandle):_*).
+      lookupUsers(Repository.luminaries.map(_.twitterHandle):_*).
       map(_.getId).
       toList
 
