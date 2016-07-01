@@ -17,6 +17,8 @@ class CommandLineParser(args: Array[String]) {
 
     if (switches.contains('h'))
       help
+    else if (switches.contains('l'))
+      luminaries
     else {
       if (switches.contains('s')) streamTweets(filter)
       listTweets(filter)
@@ -27,12 +29,16 @@ class CommandLineParser(args: Array[String]) {
     "",
     "Usage",
     "\tnews -h                  Display this help",
+    "\tnews -l                  List luminaries",
     "\tnews [switches] [hours]  Display luminary tweets",
     "where switches are",
     "\t-c                       Conversation tweets (default is off)",
     "\t-r                       Retweets (default is off)",
     "\t-s                       Maintain live stream of results",
     "") mkString "\r\n"
+
+  def luminaries(): String =
+    Luminary.luminaries.map(format) mkString "\r\n"
 
   def streamTweets(filter: Tweet => Boolean): Unit =
     Twitter.tweetStream(new TwitterRequest(Luminary.luminaries, hours, filter), printSingle)
@@ -48,6 +54,9 @@ class CommandLineParser(args: Array[String]) {
 
   def format(luminary: Luminary, tweets: List[Tweet]): String =
     "" :: header(luminary) :: "" :: tweets.map(TweetFormatter.format) mkString "\r\n"
+
+  def format(luminary: Luminary): String =
+    f"$Bold${luminary.name}%-28s$EndStyle ${luminary.twitterHandle}"
 
   def printSingle(luminary: Luminary, tweet: Tweet): Unit = {
     println(header(luminary))
