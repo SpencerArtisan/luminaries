@@ -8,26 +8,23 @@ import twitter4j.{TwitterStreamFactory, _}
 import scala.collection.JavaConversions._
 
 object Twitter {
-
   type Tweet = Status
 
-  val Boring = List("soccer", "football", "sport")
+  private val Boring = List("soccer", "football", "sport")
 
-  val luminaryIds = Luminary.luminaries.map(_.userId)
-
-  val token = new TwitterFactory(
+  private val token = new TwitterFactory(
     new ConfigurationBuilder().
       setApplicationOnlyAuthEnabled(true).
       build()).getInstance().getOAuth2Token
 
-  val twitter = new TwitterFactory(
+  private val twitter = new TwitterFactory(
     new ConfigurationBuilder().
       setApplicationOnlyAuthEnabled(true).
       setOAuth2TokenType(token.getTokenType).
       setOAuth2AccessToken(token.getAccessToken).
       build()).getInstance()
 
-  val twitterStream = new TwitterStreamFactory(
+  private val twitterStream = new TwitterStreamFactory(
     new ConfigurationBuilder().
       build()).getInstance()
 
@@ -60,6 +57,13 @@ object Twitter {
     twitterStream.filter(new FilterQuery().follow(luminaryIds:_*))
   }
 
+  private val luminaryIds: List[Long] =
+    twitter.
+      users().
+      lookupUsers(Luminary.luminaries.map(_.twitterHandle):_*).
+      map(_.getId).
+      toList
+
   private def buildQuery(request: TwitterRequest): Query =
     new Query(request.luminaries.map("from:" + _.twitterHandle) mkString " OR ").count(100)
 
@@ -71,7 +75,7 @@ object Twitter {
     tweeter.get
   }
 
-  def matchLuminary(tweet: Tweet, luminaries: List[Luminary]): Option[Luminary] =
+  private def matchLuminary(tweet: Tweet, luminaries: List[Luminary]): Option[Luminary] =
     luminaries.find(tweeter => tweeter.twitterHandle.equals(tweet.getUser.getScreenName))
 
   private def withinHours(tweet: Tweet, hours: Int): Boolean =
