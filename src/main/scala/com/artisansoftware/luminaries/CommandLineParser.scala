@@ -28,16 +28,16 @@ class CommandLineParser(args: Array[String]) {
 
   def help: String = List(
     "",
-    "Usage",
-    "\tnews -h                          Display this help",
-    "\tnews -l                          List luminaries",
-    "\tnews -a [twitter handle] [name]  Add a new luminary",
-    "\tnews -d [twitter handle]         Delete a luminary",
-    "\tnews [switches] [hours]          Display luminary tweets",
-    "where switches are",
-    "\t-c                               Conversation tweets (default is off)",
-    "\t-r                               Retweets (default is off)",
-    "\t-s                               Maintain live stream of results",
+    "Switches",
+    "\t[default behaviour]         Display recent tweets",
+    "\t[number]                    Include tweets for a given number of hours",
+    "\t-c                          Include conversation tweets (default is off)",
+    "\t-r                          Include retweets (default is off)",
+    "\t-s                          Maintain live stream of results",
+    "\t-l                          List luminaries",
+    "\t-a [twitter handle] [name]  Add a new luminary",
+    "\t-d [twitter handle]         Delete a luminary",
+    "\t-h                          Display this help",
     "") mkString "\r\n"
 
   def luminaries: String =
