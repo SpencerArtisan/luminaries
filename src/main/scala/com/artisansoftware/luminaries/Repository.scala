@@ -5,9 +5,19 @@ import java.io.{File, FileReader, FileWriter}
 import com.lambdaworks.jacks.JacksMapper
 
 object Repository {
-  private val file = new File(f"${System.getProperty("user.home")}/luminaries.json")
+  val filename: String = System.getProperty("com.artisansoftware.luminaries.file", "luminaries")
+  private val file = new File(f"${System.getProperty("user.home")}/$filename.json")
   if (!file.exists()) file.createNewFile()
-  var luminaries = JacksMapper.readValue[List[Luminary]](new FileReader(file))
+  private val reader: FileReader = new FileReader(file)
+  var luminaries: List[Luminary] = List()
+
+  try {
+    luminaries = JacksMapper.readValue[List[Luminary]](reader)
+  } catch {
+    case _: Throwable => // Do nothing
+  } finally {
+    reader.close()
+  }
 
   def +(luminary: Luminary): Unit = {
     luminaries = luminary :: luminaries
