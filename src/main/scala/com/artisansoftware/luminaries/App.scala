@@ -1,10 +1,6 @@
 package com.artisansoftware.luminaries
 
-import java.lang.Exception
-
-import twitter4j.Status
-import Twitter._
-import Style._
+import com.artisansoftware.luminaries.Style._
 
 object App {
   def main(args: Array[String]) =

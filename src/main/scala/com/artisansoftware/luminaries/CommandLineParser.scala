@@ -1,8 +1,7 @@
 package com.artisansoftware.luminaries
 
-import Twitter._
-import Style._
-import twitter4j._
+import com.artisansoftware.luminaries.Style._
+import com.artisansoftware.luminaries.Twitter._
 
 class CommandLineParser(args: Array[String]) {
   val DefaultHours = 2
@@ -37,7 +36,7 @@ class CommandLineParser(args: Array[String]) {
     "\t-s                       Maintain live stream of results",
     "") mkString "\r\n"
 
-  def luminaries(): String =
+  def luminaries: String =
     Luminary.luminaries.map(format) mkString "\r\n"
 
   def streamTweets(filter: Tweet => Boolean): Unit =

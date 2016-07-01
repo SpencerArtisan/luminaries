@@ -1,7 +1,5 @@
 package com.artisansoftware.luminaries
 
-import twitter4j.Status
-
 object Luminary {
   val luminaries = List(
     Luminary("Michael Crick", "MichaelLCrick"),

@@ -1,7 +1,7 @@
 package com.artisansoftware.luminaries
 
-import Twitter._
-import Style._
+import com.artisansoftware.luminaries.Style._
+import com.artisansoftware.luminaries.Twitter._
 
 object TweetFormatter {
   def format(tweet: Tweet): String =
