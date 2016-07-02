@@ -15,13 +15,13 @@ mvn install
 
 Next, create your .bashrc alias:
 <pre>
-``alias news='java
+alias news='java
 [-Dcom.artisansoftware.luminaries.file=[config file name (defaults to luminaries)]
 -Dtwitter4j.oauth.accessToken=[YOUR ACCESS KEY]
 -Dtwitter4j.oauth.accessTokenSecret=[YOUR ACCESS TOKEN SECRET]
 -Dtwitter4j.oauth.consumerKey=[YOUR CONSUMER KEY]
 -Dtwitter4j.oauth.consumerSecret=[YOUR CONSUMER SECRET]
--jar [ABSOLTE PATH TO target/luminaries-1.0-SNAPSHOT-jar-with-dependencies.jar]'``
+-jar [ABSOLTE PATH TO target/luminaries-1.0-SNAPSHOT-jar-with-dependencies.jar]'
 </pre>
 
 Now, try it out:
