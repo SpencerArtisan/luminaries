@@ -31,4 +31,12 @@ class TweetFormatterTest extends FunSuite with MockitoSugar {
     when(tweet.getCreatedAt).thenReturn(new Date(2016, 1, 2, 3, 4, 5))
     assert(TweetFormatter.format(tweet) === "\u001B[1mWed Feb 02 03:04\u001B[0m   a link \u001B[34m\u001B[4mhttps://t.co/NFO0lamzvz\u001B[0m\u001B[39m in middle")
   }
+
+  test("tweet with multiple links") {
+    val tweet = mock[Tweet]
+    when(tweet.getText).thenReturn("link1 https://xxx link2 https://yyy")
+    when(tweet.getCreatedAt).thenReturn(new Date(2016, 1, 2, 3, 4, 5))
+    assert(TweetFormatter.format(tweet) === "\u001B[1mWed Feb 02 03:04\u001B[0m   link1 \u001B[34m\u001B[4mhttps://xxx\u001B[0m\u001B[39m link2 \u001B[34m\u001B[4mhttps://yyy\u001B[0m\u001B[39m")
+  }
+
 }

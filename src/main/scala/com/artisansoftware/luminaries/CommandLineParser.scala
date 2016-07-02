@@ -8,9 +8,6 @@ class CommandLineParser(args: Array[String]) {
   private val argsExcludingSwitches = args.filterNot(_.startsWith("-"))
   private val switches = args.filter(_.startsWith("-")).
     flatMap((switch) => switch.substring(1).toCharArray)
-  private val filter = (t: Tweet) =>
-    (!t.isRetweet || switches.contains('r')) &&
-      (t.getInReplyToUserId == -1 || switches.contains('c'))
 
   def execute: String =
     if (switches.contains('h'))
@@ -21,16 +18,20 @@ class CommandLineParser(args: Array[String]) {
       addLuminary()
     else if (switches.contains('d'))
       deleteLuminary()
+    else if (Repository.luminaries.isEmpty)
+      f"${Red}Please add some luminaries$EndColour"
     else {
       if (switches.contains('s')) streamTweets()
       listTweets
     }
 
-  def help: String = List(
+  private def help: String = List(
     "",
-    "Switches",
-    "\t[default behaviour]         Display recent tweets",
-    "\t[number]                    Include tweets for a given number of hours",
+    "Command Arguments:",
+    "\t[number of hours] [keywords]",
+    "",
+    "Switches:",
+    "\t[without switches]          Display recent tweets",
     "\t-c                          Include conversation tweets (default is off)",
     "\t-r                          Include retweets (default is off)",
     "\t-s                          Maintain live stream of results",
@@ -40,17 +41,17 @@ class CommandLineParser(args: Array[String]) {
     "\t-h                          Display this help",
     "") mkString "\r\n"
 
-  def luminaries: String =
+  private def luminaries: String =
     Repository.luminaries.map(format) mkString "\r\n"
 
-  def addLuminary(): String = {
+  private def addLuminary(): String = {
     val twitterHandle = argsExcludingSwitches(0)
     val name = argsExcludingSwitches.tail mkString " "
     Repository + Luminary(name, twitterHandle)
     f"Added luminary $Bold$name$EndStyle with twitter handle $Bold$twitterHandle$EndStyle"
   }
 
-  def deleteLuminary(): String = {
+  private def deleteLuminary(): String = {
     val twitterHandle = argsExcludingSwitches(0)
     val luminary: Luminary = Luminary(null, twitterHandle)
     if (Repository.contains(luminary)) {
@@ -60,29 +61,37 @@ class CommandLineParser(args: Array[String]) {
       f"${Red}There is no luminary with twitter handle $Bold$twitterHandle$EndStyle$EndColour"
   }
 
-  def streamTweets(): Unit =
+  private def streamTweets(): Unit =
     Twitter.tweetStream(new TwitterRequest(Repository.luminaries, hours, filter), printSingle)
 
-  def listTweets: String =
+  private def listTweets: String =
     formatAll(Twitter.tweets(new TwitterRequest(Repository.luminaries, hours, filter)))
 
-  def hours: Int =
-    if (argsExcludingSwitches.length >= 1) argsExcludingSwitches(0).toInt else DefaultHours
+  private def hours: Int =
+    if (argsExcludingSwitches.length >= 1 && argsExcludingSwitches(0).forall(_.isDigit)) argsExcludingSwitches(0).toInt else DefaultHours
 
-  def formatAll(result: Map[Luminary, List[Tweet]]): String =
+  private def filter(t: Tweet): Boolean =
+    (!t.isRetweet || switches.contains('r')) &&
+      (t.getInReplyToUserId == -1 || switches.contains('c')) &&
+      (keywords.isEmpty || keywords.exists(t.getText.toUpperCase.contains(_)))
+
+  private def keywords: Array[String] =
+    argsExcludingSwitches.filterNot(_.forall(_.isDigit)).map(_.toUpperCase)
+
+  private def formatAll(result: Map[Luminary, List[Tweet]]): String =
     (for ((luminary, tweets) <- result) yield format(luminary, tweets)) mkString "\r\n"
 
-  def format(luminary: Luminary, tweets: List[Tweet]): String =
+  private def format(luminary: Luminary, tweets: List[Tweet]): String =
     "" :: header(luminary) :: "" :: tweets.map(TweetFormatter.format) mkString "\r\n"
 
-  def format(luminary: Luminary): String =
+  private def format(luminary: Luminary): String =
     f"$Bold${luminary.name}%-28s$EndStyle ${luminary.twitterHandle}"
 
-  def printSingle(luminary: Luminary, tweet: Tweet): Unit = {
+  private def printSingle(luminary: Luminary, tweet: Tweet): Unit = {
     println(header(luminary))
     println(TweetFormatter.format(tweet))
   }
 
-  def header(luminary: Luminary): String =
+  private def header(luminary: Luminary): String =
     f"$GreyBackground${luminary.name.toUpperCase}%28s  $EndStyle"
 }

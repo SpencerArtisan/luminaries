@@ -36,8 +36,10 @@ object Twitter {
 
     do {
       query = result.nextQuery()
-      result = twitter.search().search(query)
-      allTweets = allTweets ++ result.getTweets
+      if (query != null) {
+        result = twitter.search().search(query)
+        allTweets = allTweets ++ result.getTweets
+      }
     } while (result.getTweets.nonEmpty && withinHours(result.getTweets.last, request.hours))
 
     allTweets.
