@@ -69,7 +69,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.artisansoftware.luminaries.App</mainClass>
+                            <mainClass>com.artisansoftware.luminaries.shell.FcisApp</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
