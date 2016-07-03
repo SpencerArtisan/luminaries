@@ -1,7 +1,6 @@
 package com.artisansoftware.luminaries.core
 
 import com.artisansoftware.luminaries.core.RichTextImplicits._
-import com.artisansoftware.luminaries.io.Twitter.Tweet
 
 object TweetFormatter {
   def format(luminaries: List[Luminary], tweets: List[Tweet]): RichText = {

@@ -1,7 +1,5 @@
 package com.artisansoftware.luminaries.core
 
-import com.artisansoftware.luminaries.io.Twitter.Tweet
-
 trait Command
 
 case class SimpleCommand(result: RichText) extends Command

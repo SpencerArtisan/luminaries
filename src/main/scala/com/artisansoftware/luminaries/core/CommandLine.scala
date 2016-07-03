@@ -1,6 +1,6 @@
 package com.artisansoftware.luminaries.core
 
-class CommandLine(args: Array[String]) {
+case class CommandLine(args: Array[String]) {
   def hasSwitch(switch: Char): Boolean = switches.contains(switch)
 
   val switches: Array[Char] = args.filter(_.startsWith("-")).flatMap(_.substring(1).toCharArray)

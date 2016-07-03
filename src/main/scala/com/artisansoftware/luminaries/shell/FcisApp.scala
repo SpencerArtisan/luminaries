@@ -2,7 +2,6 @@ package com.artisansoftware.luminaries.shell
 
 import com.artisansoftware.luminaries.core.RichTextImplicits._
 import com.artisansoftware.luminaries.core.{ReadLuminariesCommand, _}
-import com.artisansoftware.luminaries.io.Twitter.Tweet
 import com.artisansoftware.luminaries.io.{LuminaryStore, Screen, Twitter}
 
 object FcisApp {

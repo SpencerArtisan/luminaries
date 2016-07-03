@@ -2,15 +2,13 @@ package com.artisansoftware.luminaries.io
 
 import java.util.Date
 
-import com.artisansoftware.luminaries.core.Luminary
+import com.artisansoftware.luminaries.core.{Luminary, Tweet}
 import twitter4j.conf.ConfigurationBuilder
 import twitter4j.{FilterQuery, _}
 
 import scala.collection.JavaConversions._
 
 object Twitter {
-  type Tweet = Status
-
   private val token = new TwitterFactory(
     new ConfigurationBuilder().
       setApplicationOnlyAuthEnabled(true).

@@ -1,6 +1,5 @@
 package com.artisansoftware.luminaries.core
 
-import com.artisansoftware.luminaries.io.Twitter.Tweet
 import com.artisansoftware.luminaries.core.RichTextImplicits._
 
 object CommandFactory {
