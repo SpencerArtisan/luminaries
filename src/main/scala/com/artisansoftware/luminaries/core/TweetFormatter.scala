@@ -4,13 +4,13 @@ import com.artisansoftware.luminaries.core.RichTextImplicits._
 import com.artisansoftware.luminaries.io.Twitter.Tweet
 
 object TweetFormatter {
-  def format(tweets: List[Tweet], luminaries: List[Luminary]): RichText = {
+  def format(luminaries: List[Luminary], tweets: List[Tweet]): RichText = {
     val tweetsByLuminary = tweets.groupBy(tweet => matchLuminaryStrict(tweet, luminaries))
-    (for ((luminary, tweets) <- tweetsByLuminary) yield format(luminary, tweets)).foldLeft("")(_ + _)
+    (for ((luminary, tweets) <- tweetsByLuminary) yield format(luminary, tweets)).foldLeft("")(_ + "\n" + _)
   }
 
   private def format(luminary: Luminary, tweets: List[Tweet]): RichText =
-    "\n\n" + header(luminary) + tweets.map(format).foldLeft("\n")(_ + "\n" + _)
+    "\n" + header(luminary) + tweets.map(format).foldLeft("\n")(_ + "\n" + _)
 
   private def header(luminary: Luminary): RichText =
     luminary.name.toUpperCase.greyBackground.padLeft(28) + "  ".greyBackground

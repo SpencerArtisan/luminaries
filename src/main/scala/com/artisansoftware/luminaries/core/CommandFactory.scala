@@ -10,7 +10,7 @@ object CommandFactory {
   def build(commandLine: CommandLine): Command =
     if (commandLine.hasSwitch('l'))
       ReadLuminariesCommand
-    else if (commandLine.hasSwitch('d')  && commandLine.textArgs.nonEmpty)
+    else if (commandLine.hasSwitch('d') && commandLine.textArgs.nonEmpty)
       DeleteLuminaryCommand(commandLine.textArgs(0))
     else if (commandLine.hasSwitch('a') && commandLine.textArgs.length > 1)
       AddLuminaryCommand(commandLine.textArgs(0), commandLine.textArgs.drop(1) mkString " ")
@@ -34,8 +34,7 @@ object CommandFactory {
     words.exists(word => tweet.getText.toUpperCase.contains(word.toUpperCase))
 
   val help = new SimpleCommand(
-    new RichText() +
-      "\n\nCommand Arguments:\n" +
+    "\n\nCommand Arguments:\n" +
       "\t[number of hours] [keywords]\n" +
       "Switches:\n" +
       "\t[without switches]          Display recent tweets\n" +

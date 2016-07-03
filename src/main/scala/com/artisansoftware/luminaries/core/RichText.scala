@@ -13,7 +13,6 @@ class RichText(protected val parts: List[TextPart] = List()) {
   def this(text: String) = this(List(new TextPart(text)))
 
   def + (other: RichText): RichText = new RichText(parts ++ other.parts)
-  def newLine: RichText = this + new RichText("\n")
 
   def apply(styleCode: Int) = new RichText(parts.map(_.apply(styleCode)))
   def blue = apply(34)
@@ -30,7 +29,7 @@ class RichText(protected val parts: List[TextPart] = List()) {
 }
 
 object RichTextImplicits {
-  implicit def wrap(s: String): RichText = new RichText(s)
+  implicit def wrap(text: String): RichText = new RichText(text)
 }
 
 
