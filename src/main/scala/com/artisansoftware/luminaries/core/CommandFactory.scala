@@ -4,6 +4,7 @@ import com.artisansoftware.luminaries.io.Twitter.Tweet
 
 object CommandFactory {
   private val DefaultHours = 3
+  private val Boring = List("football", "soccer")
 
   def build(commandLine: CommandLine): Command =
     if (commandLine.hasSwitch('h'))
@@ -22,11 +23,14 @@ object CommandFactory {
         ReadTweetsCommand(hours, filter(commandLine))
     }
 
-  private def filter(commandLine: CommandLine)(t: Tweet): Boolean =
-    (!t.isRetweet || commandLine.hasSwitch('r')) &&
-      (t.getInReplyToUserId == -1 || commandLine.hasSwitch('c')) &&
-      (commandLine.textArgs.isEmpty ||
-        commandLine.textArgs.exists(keyword => t.getText.toUpperCase.contains(keyword.toUpperCase)))
+  private def filter(commandLine: CommandLine)(tweet: Tweet): Boolean =
+    (!tweet.isRetweet || commandLine.hasSwitch('r')) &&
+      (tweet.getInReplyToUserId == -1 || commandLine.hasSwitch('c')) &&
+      !contains(tweet, Boring) &&
+      (commandLine.textArgs.isEmpty || contains(tweet, commandLine.textArgs))
+
+  def contains(tweet: Tweet, words: Seq[String] = Boring): Boolean =
+    words.exists(word => tweet.getText.toUpperCase.contains(word.toUpperCase))
 
   val help = new SimpleCommand(List(
     new Line(""),
