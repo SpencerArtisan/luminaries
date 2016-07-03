@@ -34,7 +34,7 @@ news -h
 The code is constructed using a Functional Core Imperative Shell architecture.  See https://www.destroyallsoftware.com/talks/boundaries
 
 |Package|Description|
-+-------+-----------|
+|-------|-----------|
 |core|Purely functional, stateless, no side effects, idempotent, minimal dependencies|
 |io|Deals with messy stateful outside world of terminal output, twitter and config files|
 |shell|Mediates between core and io. Minimal code paths.|
