@@ -10,11 +10,11 @@ object FcisApp {
   def main(args: Array[String]): Unit = {
     val command = CommandFactory.build(new CommandLine(args))
     val output = execute(command)
-    Screen.write(output:_*)
+    Screen.write(output)
   }
 
-  def execute(command: Command): List[Line] = {
-    val output: List[Line] = command match {
+  def execute(command: Command): RichText = {
+    val output: RichText = command match {
       case ReadTweetsCommand(hours, filter) =>
         readTweets(hours, filter)
       case StreamTweetsCommand(hours, filter) =>
@@ -32,7 +32,7 @@ object FcisApp {
     output
   }
 
-  private def readTweets(hours: Int, filter: Tweet => Boolean): List[Line] = {
+  private def readTweets(hours: Int, filter: Tweet => Boolean): RichText = {
     val luminaries = LuminaryStore.read()
     val tweets = Twitter.read(luminaries, hours).filter(filter)
     TweetFormatter.format(tweets, luminaries)
@@ -47,24 +47,24 @@ object FcisApp {
   private def onStreamedTweet(luminaries: List[Luminary], filter: Tweet => Boolean)(tweet: Tweet): Unit =
     if (filter(tweet)) Screen.write(TweetFormatter.format(List(tweet), luminaries))
 
-  private def readLuminaries: List[Line] =
+  private def readLuminaries: RichText =
     LuminaryFormatter.format(LuminaryStore.read())
 
-  private def addLuminary(twitterHandle: String, name: String): Line = {
+  private def addLuminary(twitterHandle: String, name: String): RichText = {
     val luminaries = LuminaryStore.read()
     val updated = Luminary(name, twitterHandle) :: luminaries
     LuminaryStore.write(updated)
-    new Line("Added luminary ", name.bold, " with twitter handle ", twitterHandle.bold)
+    "Added luminary " + name.bold + " with twitter handle " + twitterHandle.bold
   }
 
-  private def deleteLuminary(twitterHandle: String): Line = {
+  private def deleteLuminary(twitterHandle: String): RichText = {
     val luminaries = LuminaryStore.read()
     val updated = luminaries.filterNot(twitterHandle == _.twitterHandle)
     if (updated.length < luminaries.length) {
       LuminaryStore.write(updated)
-      new Line("Removed luminary with twitter handle ", twitterHandle.bold)
+      "Removed luminary with twitter handle " + twitterHandle.bold
     } else
-      new Line("There is no luminary with twitter handle ".red, twitterHandle.red.bold)
+      "There is no luminary with twitter handle ".red + twitterHandle.red.bold
   }
 
 }

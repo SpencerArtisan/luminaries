@@ -4,7 +4,7 @@ import com.artisansoftware.luminaries.io.Twitter.Tweet
 
 trait Command
 
-case class SimpleCommand(result: List[Line]) extends Command
+case class SimpleCommand(result: RichText) extends Command
 case class StreamTweetsCommand(hours: Int, filter: Tweet => Boolean) extends Command
 case class ReadTweetsCommand(hours: Int, filter: Tweet => Boolean) extends Command
 case object ReadLuminariesCommand extends Command

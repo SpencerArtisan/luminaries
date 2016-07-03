@@ -1,22 +1,32 @@
 package com.artisansoftware.luminaries.core
 
-
-class RichText(text: String, styleCodes: List[Int] = List()) {
+class TextPart(text: String, val styles: List[Int] = List()) {
   private val Marker = "\u001B[%sm"
 
-  def apply(styleCode: Int) = new RichText(text, styleCode :: styleCodes)
+  def apply(styleCode: Int) = new TextPart(text, styleCode :: styles)
+  def length = text.length
+  private def style(codes: Int*): String = codes.map(Marker.format(_)) mkString
+  override def toString: String = style(styles:_*) + text + style(0)
+}
+
+class RichText(protected val parts: List[TextPart] = List()) {
+  def this(text: String) = this(List(new TextPart(text)))
+
+  def + (other: RichText): RichText = new RichText(parts ++ other.parts)
+  def newLine: RichText = this + new RichText("\n")
+
+  def apply(styleCode: Int) = new RichText(parts.map(_.apply(styleCode)))
   def blue = apply(34)
   def red = apply(31)
   def greyBackground = apply(47)
   def bold = apply(1)
   def underline = apply(4)
-  def padLeft(width: Int) = new RichText(padding(width) + text, styleCodes)
-  def padRight(width: Int) = new RichText(text + padding(width), styleCodes)
+  def padLeft(width: Int) = new RichText(new TextPart(padding(width), parts.head.styles) :: parts)
+  def padRight(width: Int) = new RichText(parts :+ new TextPart(padding(width), parts.last.styles))
+  def length = parts.foldLeft(0)(_ + _.length)
 
-  private def padding(width: Int): String = " " * Math.max(0, width - text.length)
-  private def style(codes: Int*): String = codes.map(Marker.format(_)) mkString
-
-  override def toString: String = style(styleCodes:_*) + text + style(0)
+  override def toString: String = parts.foldLeft("")(_ + _)
+  private def padding(width: Int): String = " " * Math.max(0, width - length)
 }
 
 object RichTextImplicits {

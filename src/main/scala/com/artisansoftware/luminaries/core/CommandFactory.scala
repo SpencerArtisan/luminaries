@@ -1,27 +1,28 @@
 package com.artisansoftware.luminaries.core
 
 import com.artisansoftware.luminaries.io.Twitter.Tweet
+import com.artisansoftware.luminaries.core.RichTextImplicits._
 
 object CommandFactory {
   private val DefaultHours = 3
   private val Boring = List("football", "soccer")
 
   def build(commandLine: CommandLine): Command =
-    if (commandLine.hasSwitch('h'))
-      help
-    else if (commandLine.hasSwitch('l'))
+    if (commandLine.hasSwitch('l'))
       ReadLuminariesCommand
-    else if (commandLine.hasSwitch('d'))
+    else if (commandLine.hasSwitch('d')  && commandLine.textArgs.nonEmpty)
       DeleteLuminaryCommand(commandLine.textArgs(0))
-    else if (commandLine.hasSwitch('a'))
+    else if (commandLine.hasSwitch('a') && commandLine.textArgs.length > 1)
       AddLuminaryCommand(commandLine.textArgs(0), commandLine.textArgs.drop(1) mkString " ")
-    else {
-      val hours: Int = if (commandLine.numericArgs.isEmpty) DefaultHours else commandLine.numericArgs(0)
+    else if (!commandLine.hasSwitch('h')) {
       if (commandLine.hasSwitch('s'))
-        StreamTweetsCommand(hours, filter(commandLine))
+        StreamTweetsCommand(hours(commandLine), filter(commandLine))
       else
-        ReadTweetsCommand(hours, filter(commandLine))
-    }
+        ReadTweetsCommand(hours(commandLine), filter(commandLine))
+    } else help
+
+  def hours(commandLine: CommandLine): Int =
+    if (commandLine.numericArgs.isEmpty) DefaultHours else commandLine.numericArgs(0)
 
   private def filter(commandLine: CommandLine)(tweet: Tweet): Boolean =
     (!tweet.isRetweet || commandLine.hasSwitch('r')) &&
@@ -32,20 +33,17 @@ object CommandFactory {
   def contains(tweet: Tweet, words: Seq[String] = Boring): Boolean =
     words.exists(word => tweet.getText.toUpperCase.contains(word.toUpperCase))
 
-  val help = new SimpleCommand(List(
-    new Line(""),
-    new Line("Command Arguments:"),
-    new Line("\t[number of hours] [keywords]"),
-    new Line(""),
-    new Line("Switches:"),
-    new Line("\t[without switches]          Display recent tweets"),
-    new Line("\t-c                          Include conversation tweets (default is off)"),
-    new Line("\t-r                          Include retweets (default is off)"),
-    new Line("\t-s                          Maintain live stream of results"),
-    new Line("\t-l                          List luminaries"),
-    new Line("\t-a [twitter handle] [name]  Add a new luminary"),
-    new Line("\t-d [twitter handle]         Delete a luminary"),
-    new Line("\t-h                          Display this help"),
-    new Line("")
-  ))
+  val help = new SimpleCommand(
+    new RichText() +
+      "\n\nCommand Arguments:\n" +
+      "\t[number of hours] [keywords]\n" +
+      "Switches:\n" +
+      "\t[without switches]          Display recent tweets\n" +
+      "\t-c                          Include conversation tweets (default is off)\n" +
+      "\t-r                          Include retweets (default is off)\n" +
+      "\t-s                          Maintain live stream of results\n" +
+      "\t-l                          List luminaries\n" +
+      "\t-a [twitter handle] [name]  Add a new luminary\n" +
+      "\t-d [twitter handle]         Delete a luminary\n" +
+      "\t-h                          Display this help\n\n")
 }
