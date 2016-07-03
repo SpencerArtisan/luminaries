@@ -8,9 +8,6 @@ import twitter4j.{FilterQuery, _}
 
 import scala.collection.JavaConversions._
 
-/**
-  * Created by spencerward on 02/07/2016.
-  */
 object Twitter {
   type Tweet = Status
 
@@ -31,26 +28,25 @@ object Twitter {
       build()).getInstance()
 
   def read(luminaries: List[Luminary], hours: Int): List[Tweet] = {
-    var query: Query = buildQuery(luminaries)
-    var result: QueryResult = twitter.search().search(query)
-    var allTweets: List[Tweet] = List[Tweet]()
-    allTweets = allTweets ++ result.getTweets
+    queryStream(luminaries, hours).
+      foldLeft[List[Tweet]](List()) { (acc, qandr) => acc ++ qandr._2.getTweets }.
+      filter(withinHours(_, hours))
+  }
 
-    do {
-      query = result.nextQuery()
-      if (query != null) {
-        result = twitter.search().search(query)
-        allTweets = allTweets ++ result.getTweets
-      }
-    } while (result.getTweets.nonEmpty && withinHours(result.getTweets.last, hours))
-
-    allTweets.filter(withinHours(_, hours))
+  def queryStream(luminaries: List[Luminary], hours: Int): Stream[(Query, QueryResult)] = {
+    def impl(query: Query): Stream[(Query, QueryResult)] = {
+      val result: QueryResult = twitter.search().search(query)
+      val nextQuery = result.nextQuery()
+      val terminateStream = nextQuery == null || result.getTweets.isEmpty || !withinHours(result.getTweets.last, hours)
+      (nextQuery, result) #:: (if (terminateStream) Stream.empty else impl(nextQuery))
+    }
+    impl(buildQuery(luminaries))
   }
 
   def readIds(luminaries: List[Luminary]): List[Long] =
     twitter.
       users().
-      lookupUsers(luminaries.map(_.twitterHandle):_*).
+      lookupUsers(luminaries.map(_.twitterHandle): _*).
       map(_.getId).
       toList
 
@@ -58,7 +54,7 @@ object Twitter {
     twitterStream.addListener(new StatusAdapter() {
       override def onStatus(tweet: Tweet): Unit = consumer(tweet)
     })
-    twitterStream.filter(new FilterQuery().follow(luminaryIds:_*))
+    twitterStream.filter(new FilterQuery().follow(luminaryIds: _*))
   }
 
   private def buildQuery(luminaries: List[Luminary]): Query =

@@ -5,9 +5,6 @@ import java.io.{File, FileReader, FileWriter}
 import com.artisansoftware.luminaries.core.Luminary
 import com.lambdaworks.jacks.JacksMapper
 
-/**
-  * Created by spencerward on 02/07/2016.
-  */
 object LuminaryStore {
   val Filename: String = System.getProperty("com.artisansoftware.luminaries.file", "luminaries")
 
@@ -16,11 +13,9 @@ object LuminaryStore {
     try {
       JacksMapper.readValue[List[Luminary]](reader)
     } catch {
-      case _: Throwable => // Do nothing
-        List()
-    } finally {
+      case _: Throwable => List()
+    } finally
       reader.close()
-    }
   }
 
   def write(luminaries: List[Luminary]): Unit = {
