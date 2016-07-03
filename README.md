@@ -29,3 +29,7 @@ Now, try it out:
 news -h
 </pre>
 
+## Architecture
+
+The code is constructed using a Functional Core Imperative Shell architecture.  See https://www.destroyallsoftware.com/talks/boundaries
+
