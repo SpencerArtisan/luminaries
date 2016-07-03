@@ -2,9 +2,6 @@ package com.artisansoftware.luminaries.core
 
 import com.artisansoftware.luminaries.io.Twitter.Tweet
 
-/**
-  * Created by spencerward on 02/07/2016.
-  */
 trait Command
 
 case class SimpleCommand(result: List[Line]) extends Command

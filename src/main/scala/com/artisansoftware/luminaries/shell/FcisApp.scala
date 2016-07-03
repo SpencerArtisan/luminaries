@@ -23,9 +23,9 @@ object FcisApp {
       case ReadLuminariesCommand =>
         readLuminaries
       case DeleteLuminaryCommand(twitterHandle) =>
-        List(deleteLuminary(twitterHandle))
+        deleteLuminary(twitterHandle)
       case AddLuminaryCommand(twitterHandle, name) =>
-        List(addLuminary(twitterHandle, name))
+        addLuminary(twitterHandle, name)
       case SimpleCommand(text) =>
         text
     }

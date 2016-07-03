@@ -2,13 +2,10 @@ package com.artisansoftware.luminaries.core
 
 import com.artisansoftware.luminaries.io.Twitter.Tweet
 
-/**
-  * Created by spencerward on 02/07/2016.
-  */
 object CommandFactory {
   private val DefaultHours = 3
 
-  def build(commandLine: CommandLine): Command = {
+  def build(commandLine: CommandLine): Command =
     if (commandLine.hasSwitch('h'))
       help
     else if (commandLine.hasSwitch('l'))
@@ -24,7 +21,6 @@ object CommandFactory {
       else
         ReadTweetsCommand(hours, filter(commandLine))
     }
-  }
 
   private def filter(commandLine: CommandLine)(t: Tweet): Boolean =
     (!t.isRetweet || commandLine.hasSwitch('r')) &&

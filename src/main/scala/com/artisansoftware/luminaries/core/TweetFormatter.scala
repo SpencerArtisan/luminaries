@@ -10,7 +10,7 @@ object TweetFormatter {
   }
 
   private def format(luminary: Luminary, tweets: List[Tweet]): List[Line] =
-    new Line("") :: header(luminary) :: new Line("") :: tweets.map(format)
+    new Line() :: header(luminary) :: new Line() :: tweets.map(format)
 
   private def header(luminary: Luminary): Line =
     new Line(luminary.name.toUpperCase.greyBackground.padLeft(28), "  ".greyBackground)
