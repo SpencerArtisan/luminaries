@@ -10,16 +10,23 @@ object CommandFactory {
   def build(commandLine: CommandLine): Command =
     if (commandLine.hasSwitch('l'))
       ReadLuminariesCommand
-    else if (commandLine.hasSwitch('d') && commandLine.textArgs.nonEmpty)
-      DeleteLuminaryCommand(commandLine.textArgs(0))
-    else if (commandLine.hasSwitch('a') && commandLine.textArgs.length > 1)
-      AddLuminaryCommand(commandLine.textArgs(0), commandLine.textArgs.drop(1) mkString " ")
-    else if (!commandLine.hasSwitch('h')) {
+    else if (commandLine.hasSwitch('d'))
+      if (commandLine.textArgs.nonEmpty)
+        DeleteLuminaryCommand(commandLine.textArgs(0))
+      else
+        help
+    else if (commandLine.hasSwitch('a'))
+      if (commandLine.textArgs.length > 1)
+        AddLuminaryCommand(commandLine.textArgs(0), commandLine.textArgs.drop(1) mkString " ")
+      else
+        help
+    else if (commandLine.hasSwitch('h'))
+      help
+    else
       if (commandLine.hasSwitch('s'))
         StreamTweetsCommand(hours(commandLine), filter(commandLine))
       else
         ReadTweetsCommand(hours(commandLine), filter(commandLine))
-    } else help
 
   def hours(commandLine: CommandLine): Int =
     if (commandLine.numericArgs.isEmpty) DefaultHours else commandLine.numericArgs(0)
@@ -34,7 +41,7 @@ object CommandFactory {
     words.exists(word => tweet.getText.toUpperCase.contains(word.toUpperCase))
 
   val help = new SimpleCommand(
-    "\n\nCommand Arguments:\n" +
+    "\nCommand Arguments:\n" +
       "\t[number of hours] [keywords]\n" +
       "Switches:\n" +
       "\t[without switches]          Display recent tweets\n" +
@@ -44,5 +51,5 @@ object CommandFactory {
       "\t-l                          List luminaries\n" +
       "\t-a [twitter handle] [name]  Add a new luminary\n" +
       "\t-d [twitter handle]         Delete a luminary\n" +
-      "\t-h                          Display this help\n\n")
+      "\t-h                          Display this help\n")
 }

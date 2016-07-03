@@ -10,7 +10,7 @@ object TweetFormatter {
   }
 
   private def format(luminary: Luminary, tweets: List[Tweet]): RichText =
-    "\n" + header(luminary) + tweets.map(format).foldLeft("\n")(_ + "\n" + _)
+    header(luminary) + tweets.map(format).foldLeft("\n")(_ + "\n" + _) + "\n"
 
   private def header(luminary: Luminary): RichText =
     luminary.name.toUpperCase.greyBackground.padLeft(28) + "  ".greyBackground

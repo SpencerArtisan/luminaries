@@ -10,11 +10,11 @@ object FcisApp {
   def main(args: Array[String]): Unit = {
     val command = CommandFactory.build(new CommandLine(args))
     val output = execute(command)
-    Screen.write(output)
+    Screen.write(output + "\n")
   }
 
-  def execute(command: Command): RichText = {
-    val output: RichText = command match {
+  def execute(command: Command): RichText =
+    command match {
       case ReadTweetsCommand(hours, filter) =>
         readTweets(hours, filter)
       case StreamTweetsCommand(hours, filter) =>
@@ -29,8 +29,6 @@ object FcisApp {
       case SimpleCommand(text) =>
         text
     }
-    output
-  }
 
   private def readTweets(hours: Int, filter: Tweet => Boolean): RichText = {
     val luminaries = LuminaryStore.read()
