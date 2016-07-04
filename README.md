@@ -14,7 +14,7 @@ This is intended to be run from the terminal. Suggest setting up an alias with a
 
 First, build the code:
 <pre>
-sbt assemble
+sbt assembly
 </pre>
 
 Next, create your .bashrc alias:
