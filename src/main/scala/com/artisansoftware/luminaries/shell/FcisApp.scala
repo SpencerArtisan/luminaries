@@ -7,7 +7,7 @@ import com.artisansoftware.luminaries.io.{LuminaryStore, Screen, Twitter}
 object FcisApp {
 
   def main(args: Array[String]): Unit = {
-    val command = CommandFactory.build(new CommandLine(args))
+    val command = CommandFactory.build(CommandLine(args))
     val output = execute(command)
     Screen.write(output + "\n")
   }

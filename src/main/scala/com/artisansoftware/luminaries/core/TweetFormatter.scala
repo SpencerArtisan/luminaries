@@ -5,7 +5,7 @@ import com.artisansoftware.luminaries.core.RichTextImplicits._
 object TweetFormatter {
   def format(luminaries: List[Luminary], tweets: List[Tweet]): RichText = {
     val tweetsByLuminary = tweets.groupBy(tweet => matchLuminaryStrict(tweet, luminaries))
-    (for ((luminary, tweets) <- tweetsByLuminary) yield format(luminary, tweets)).foldLeft("")(_ + "\n" + _)
+    (for ((luminary, tweets) <- tweetsByLuminary) yield format(luminary, tweets)).foldLeft(RichText())(_ + "\n" + _)
   }
 
   private def format(luminary: Luminary, tweets: List[Tweet]): RichText =
