@@ -3,16 +3,22 @@ package com.artisansoftware.luminaries.core
 import com.artisansoftware.luminaries.core.RichTextImplicits._
 
 object TweetFormatter {
-  def format(luminaries: List[Luminary], tweets: List[Tweet]): RichText = {
+  val HeaderWidth = 24
+  
+  def format(tweets: List[Tweet], luminaries: List[Luminary]): RichText = {
     val tweetsByLuminary = tweets.groupBy(tweet => matchLuminaryStrict(tweet, luminaries))
-    (for ((luminary, tweets) <- tweetsByLuminary) yield format(luminary, tweets)).foldLeft(RichText())(_ + "\n" + _)
+    (for ((luminary, tweets) <- tweetsByLuminary) yield format(tweets, luminary)).foldLeft(RichText())(_ + "\n" + _)
   }
 
-  private def format(luminary: Luminary, tweets: List[Tweet]): RichText =
+  def formatCompact(tweet: Tweet, luminaries: List[Luminary]): RichText = {
+    header(matchLuminaryStrict(tweet, luminaries)) + "  " + format(tweet) + "\n"
+  }
+
+  private def format(tweets: List[Tweet], luminary: Luminary): RichText =
     header(luminary) + tweets.map(format).foldLeft("\n")(_ + "\n" + _) + "\n"
 
   private def header(luminary: Luminary): RichText =
-    luminary.name.toUpperCase.greyBackground.padLeft(28) + "  ".greyBackground
+    luminary.name.toUpperCase.greyBackground.padLeft(HeaderWidth) + "  ".greyBackground
 
   private def format(tweet: Tweet): RichText = {
     val date = f"${tweet.getCreatedAt}%ta %<tb %<td %<tR"

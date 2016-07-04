@@ -32,7 +32,7 @@ object FcisApp {
   private def readTweets(hours: Int, filter: Tweet => Boolean): RichText = {
     val luminaries = LuminaryStore.read()
     val tweets = Twitter.read(luminaries, hours).filter(filter)
-    TweetFormatter.format(luminaries, tweets)
+    TweetFormatter.format(tweets, luminaries)
   }
 
   private def streamTweets(filter: Tweet => Boolean): Unit = {
@@ -42,7 +42,7 @@ object FcisApp {
   }
 
   private def onStreamedTweet(luminaries: List[Luminary], filter: Tweet => Boolean)(tweet: Tweet): Unit =
-    if (filter(tweet)) Screen.write(TweetFormatter.format(luminaries, List(tweet)))
+    if (filter(tweet)) Screen.write(TweetFormatter.formatCompact(tweet, luminaries))
 
   private def readLuminaries: RichText =
     LuminaryFormatter.format(LuminaryStore.read())
