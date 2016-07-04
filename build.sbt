@@ -12,7 +12,7 @@ libraryDependencies += "org.scalamock" % "scalamock-scalatest-support_2.11" % "3
 libraryDependencies += "org.mockito" % "mockito-all" % "2.0.2-beta"
 libraryDependencies += "com.lambdaworks" % "jacks_2.11" % "2.5.2"
 
-lazy val root = (project in file(".")).
+lazy val luminaries = (project in file(".")).
   settings(commonSettings: _*)
 
 
