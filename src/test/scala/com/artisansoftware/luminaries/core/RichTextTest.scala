@@ -49,7 +49,7 @@ class RichTextTest extends FunSpec with Inside with Matchers with MockitoSugar {
     }
 
     it("should support double styling") {
-      text.blue.underline.toString should be ("\u001B[4\u001B[34mhello world\u001B[0m")
+      text.blue.underline.toString should be ("\u001B[4m\u001B[34mhello world\u001B[0m")
     }
   }
 }
