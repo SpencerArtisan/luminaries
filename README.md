@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/SpencerArtisan/luminaries.svg?style=svg)](https://circleci.com/gh/SpencerArtisan/luminaries)
+
 # luminaries
 A terminal-based twitter client.  Filters out the noise to show the most interesting information from the most interesting people.
 
