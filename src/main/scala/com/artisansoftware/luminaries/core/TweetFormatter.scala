@@ -10,12 +10,14 @@ object TweetFormatter {
     (for ((luminary, tweets) <- tweetsByLuminary) yield format(tweets, luminary)).foldLeft(RichText())(_ + "\n" + _)
   }
 
-  def formatCompact(tweet: Tweet, luminaries: List[Luminary]): RichText = {
+  def formatCompact(tweets: List[Tweet], luminaries: List[Luminary]): RichText =
+    (for (tweet <- tweets.reverse) yield formatCompact(tweet, luminaries)).foldLeft(RichText())(_ + _)
+
+  def formatCompact(tweet: Tweet, luminaries: List[Luminary]): RichText =
     header(matchLuminaryStrict(tweet, luminaries)) + "  " + format(tweet) + "\n"
-  }
 
   private def format(tweets: List[Tweet], luminary: Luminary): RichText =
-    header(luminary) + tweets.map(format).foldLeft("\n")(_ + "\n" + _) + "\n"
+    header(luminary) + tweets.reverse.map(format).foldLeft("\n")(_ + "\n" + _) + "\n"
 
   private def header(luminary: Luminary): RichText =
     luminary.name.toUpperCase.greyBackground.padLeft(HeaderWidth) + "  ".greyBackground

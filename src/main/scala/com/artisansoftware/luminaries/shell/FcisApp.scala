@@ -14,11 +14,11 @@ object FcisApp {
 
   def execute(command: Command): RichText =
     command match {
-      case ReadTweetsCommand(hours, filter) =>
-        readTweets(hours, filter)
+      case ReadTweetsCommand(hours, filter, timelineFormat) =>
+        readTweets(hours, filter, timelineFormat)
       case StreamTweetsCommand(hours, filter) =>
         streamTweets(filter)
-        readTweets(hours, filter)
+        readTweets(hours, filter, true)
       case ReadLuminariesCommand =>
         readLuminaries
       case DeleteLuminaryCommand(twitterHandle) =>
@@ -29,10 +29,13 @@ object FcisApp {
         text
     }
 
-  private def readTweets(hours: Int, filter: Tweet => Boolean): RichText = {
+  private def readTweets(hours: Int, filter: Tweet => Boolean, timelineFormat: Boolean): RichText = {
     val luminaries = LuminaryStore.read()
     val tweets = Twitter.read(luminaries, hours).filter(filter)
-    TweetFormatter.format(tweets, luminaries)
+    if (timelineFormat)
+      TweetFormatter.formatCompact(tweets, luminaries)
+    else
+      TweetFormatter.format(tweets, luminaries)
   }
 
   private def streamTweets(filter: Tweet => Boolean): Unit = {
@@ -63,5 +66,4 @@ object FcisApp {
     } else
       "There is no luminary with twitter handle ".red + twitterHandle.red.bold
   }
-
 }

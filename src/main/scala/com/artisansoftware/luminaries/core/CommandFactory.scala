@@ -25,10 +25,13 @@ object CommandFactory {
       if (commandLine.hasSwitch('s'))
         StreamTweetsCommand(hours(commandLine), filter(commandLine))
       else
-        ReadTweetsCommand(hours(commandLine), filter(commandLine))
+        ReadTweetsCommand(hours(commandLine), filter(commandLine), timelineFormat(commandLine))
 
   def hours(commandLine: CommandLine): Int =
     if (commandLine.numericArgs.isEmpty) DefaultHours else commandLine.numericArgs(0)
+
+  def timelineFormat(commandLine: CommandLine): Boolean =
+    commandLine.hasSwitch('t')
 
   private def filter(commandLine: CommandLine)(tweet: Tweet): Boolean =
     (!tweet.isRetweet || commandLine.hasSwitch('r')) &&
@@ -46,6 +49,7 @@ object CommandFactory {
       "\t[without switches]          Display recent tweets\n" +
       "\t-c                          Include conversation tweets (default is off)\n" +
       "\t-r                          Include retweets (default is off)\n" +
+      "\t-t                          Display tweets in timeline format\n" +
       "\t-s                          Maintain live stream of results\n" +
       "\t-l                          List luminaries\n" +
       "\t-a [twitter handle] [name]  Add a new luminary\n" +

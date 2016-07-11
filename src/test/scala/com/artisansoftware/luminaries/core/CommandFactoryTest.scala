@@ -65,7 +65,7 @@ class CommandFactoryTest extends FunSpec with Inside with Matchers with MockitoS
 
     it("should generate a read tweets command with default hours and filter") {
       val command = CommandFactory.build(CommandLine(Array()))
-      inside(command) { case ReadTweetsCommand(hours, filter) =>
+      inside(command) { case ReadTweetsCommand(hours, filter, _) =>
         hours should be > 0
         filter(standardTweet) should be (true)
         filter(retweet) should be (false)
@@ -75,7 +75,7 @@ class CommandFactoryTest extends FunSpec with Inside with Matchers with MockitoS
 
     it("should generate a read tweets command with retweets included") {
       val command = CommandFactory.build(CommandLine(Array("-r")))
-      inside(command) { case ReadTweetsCommand(_, filter) =>
+      inside(command) { case ReadTweetsCommand(_, filter, _) =>
         filter(standardTweet) should be (true)
         filter(retweet) should be (true)
         filter(replyTweet) should be (false)
@@ -84,7 +84,7 @@ class CommandFactoryTest extends FunSpec with Inside with Matchers with MockitoS
 
     it("should generate a read tweets command with replies included") {
       val command = CommandFactory.build(CommandLine(Array("-c")))
-      inside(command) { case ReadTweetsCommand(_, filter) =>
+      inside(command) { case ReadTweetsCommand(_, filter, _) =>
         filter(standardTweet) should be (true)
         filter(retweet) should be (false)
         filter(replyTweet) should be (true)
@@ -93,7 +93,7 @@ class CommandFactoryTest extends FunSpec with Inside with Matchers with MockitoS
 
     it("should generate a read tweets command with replies and retweets included") {
       val command = CommandFactory.build(CommandLine(Array("-cr")))
-      inside(command) { case ReadTweetsCommand(_, filter) =>
+      inside(command) { case ReadTweetsCommand(_, filter, _) =>
         filter(standardTweet) should be (true)
         filter(retweet) should be (true)
         filter(replyTweet) should be (true)
@@ -102,14 +102,14 @@ class CommandFactoryTest extends FunSpec with Inside with Matchers with MockitoS
 
     it("should generate a read tweets command with keywords included") {
       val command = CommandFactory.build(CommandLine(Array("tweet")))
-      inside(command) { case ReadTweetsCommand(_, filter) =>
+      inside(command) { case ReadTweetsCommand(_, filter, _) =>
         filter(standardTweet) should be (true)
       }
     }
 
     it("should generate a read tweets command with missing keywords excluded") {
       val command = CommandFactory.build(CommandLine(Array("wibble")))
-      inside(command) { case ReadTweetsCommand(_, filter) =>
+      inside(command) { case ReadTweetsCommand(_, filter, _) =>
         filter(standardTweet) should be (false)
       }
     }
@@ -121,24 +121,19 @@ class CommandFactoryTest extends FunSpec with Inside with Matchers with MockitoS
       when(boringTweet.getText).thenReturn("something about football...yawn")
 
       val command = CommandFactory.build(CommandLine(Array()))
-      inside(command) { case ReadTweetsCommand(_, filter) =>
+      inside(command) { case ReadTweetsCommand(_, filter, _) =>
         filter(boringTweet) should be (false)
       }
     }
 
     it("should generate a read tweets command with specified hours") {
       val command = CommandFactory.build(CommandLine(Array("42")))
-      command should matchPattern { case ReadTweetsCommand(42, _) => }
+      command should matchPattern { case ReadTweetsCommand(42, _, false) => }
+    }
+
+    it("should generate a read tweets command in timeline format") {
+      val command = CommandFactory.build(CommandLine(Array("-t")))
+      command should matchPattern { case ReadTweetsCommand(_, _, true) => }
     }
   }
-
-
-
-
-//  it should "throw NoSuchElementException if an empty stack is popped" in {
-//    val emptyStack = new Stack[Int]
-//    a[NoSuchElementException] should be thrownBy {
-//      emptyStack.pop()
-//    }
-//  }
 }
